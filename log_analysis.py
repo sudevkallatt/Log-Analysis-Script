@@ -1,4 +1,5 @@
 import re
+import csv
 from collections import defaultdict
 
 #function to parse the log file and extract data
@@ -71,10 +72,41 @@ def detect_suspicious_activity(log_entries,threshold=10):
     suspicious_ips = [(ip, count) for ip, count in failed_attempts.items() if count > threshold]
     return sorted(suspicious_ips, key=lambda x: x[1], reverse=True)
 
+#function to save results in csv file
+def save_csv(request_per_ip,most_accessed_endpoint,suspicious_activity,csv_file):
+
+    """
+    Saves the analysis results to a CSV file.
+
+    """
+    with open(csv_file,'w',newline='') as csvfile:
+        writer=csv.writer(csvfile)
+
+        # Write Requests per IP
+        writer.writerow(['Requests per IP address'])
+        writer.writerow(['IP Address','Request Count'])
+        for ip,count in request_per_ip:
+            writer.writerow([ip,count])
+        writer.writerow([])  # Blank row
+
+        # Write Most frequently accessed endpoint
+        writer.writerow(['Most frequently accessed endpoint'])
+        writer.writerow(['Endpoint','Access Count'])
+        writer.writerow(most_accessed_endpoint)
+        writer.writerow([])  # Blank row
+
+        # Write Suspicious activity
+        writer.writerow(['Suspicious activity'])
+        writer.writerow(['IP Address','Failed Login Count'])
+        for ip,count in suspicious_activity:
+            writer.writerow([ip,count])
+
+
 
 
 #beginning of main()
 log_file="sample.log"
+csv_file="log_analysis_results.csv"
 
 #parse the log file
 log_entries=parse_log_file(log_file)
@@ -108,5 +140,10 @@ if suspicious_activity:
         print(f"{ip:<20} {count}")
 else:
     print("\n No suspicious activity detected.")
+
+#write the results to csv file
+save_csv(request_per_ip,most_accessed_endpoint,suspicious_activity,csv_file)
+print("\n Results saved to ",csv_file)
+
         
 
