@@ -1,0 +1,34 @@
+# Ignore all log files
+*.log
+
+# Except the sample.log file
+!sample.log
+
+# Python-specific
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env/
+
+# Temporary files
+*.tmp
+*.bak
+
+# IDE-specific
+.vscode/
+.idea/
+*.iml
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Debug files
+*.swp
+*.swo
+*.err
+*.out
