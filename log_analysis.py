@@ -41,9 +41,23 @@ def count_requests(log_entries):
         ip_counts[entry['ip']]+=1
     return sorted(ip_counts.items(),key=lambda x:x[1],reverse=True)
 
+#function to find most accessed endpoint
+def find_endpoint(log_entries):
+
+    """
+    Finds the most accessed endpoint.
+    Returns a tuple: (Endpoint, Count).
+
+    """
+    endpoint_counts=defaultdict(int)
+    for entry in log_entries:
+        endpoint_counts[entry['endpoint']]+=1
+    most_accessed=max(endpoint_counts.items(),key=lambda x:x[1])
+    return most_accessed
 
 
 
+#beginning of main()
 log_file="sample.log"
 
 #parse the log file
@@ -51,9 +65,14 @@ log_entries=parse_log_file(log_file)
 
 #analyze the log entries to find count requests per ip,most frequently accessed endpoint and to detect suspicious activity
 request_per_ip=count_requests(log_entries)
+most_accessed_endpoint=find_endpoint(log_entries)
 
 #Display the results
 print("Requests per IP address :")
 print(f"{'IP Address':<20} {'Request Count':<15}")
 for ip,count in request_per_ip:
     print(f"{ip:<20} {count}")
+
+print("\n Most frequently accessed Endpoint : ")
+print(f"{most_accessed_endpoint[0]} (Accessed {most_accessed_endpoint[1]} times)")
+
