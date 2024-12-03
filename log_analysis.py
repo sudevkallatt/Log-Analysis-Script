@@ -55,6 +55,22 @@ def find_endpoint(log_entries):
     most_accessed=max(endpoint_counts.items(),key=lambda x:x[1])
     return most_accessed
 
+#function to detect suspicious activity
+def detect_suspicious_activity(log_entries,threshold=10):
+
+    """
+    Detects suspicious activity by identifying IPs with failed login attempts.
+    Only IPs with 'more' than 'threshold' failed login attempts will be returned.
+    Returns a sorted list of tuples: (IP Address, Failed Login Count).
+
+    """
+    failed_attempts=defaultdict(int)
+    for entry in log_entries:
+        if entry['status'] == 401:  # HTTP 401 Unauthorized indicates a failed login attempt
+            failed_attempts[entry['ip']] += 1
+    suspicious_ips = [(ip, count) for ip, count in failed_attempts.items() if count > threshold]
+    return sorted(suspicious_ips, key=lambda x: x[1], reverse=True)
+
 
 
 #beginning of main()
@@ -63,7 +79,7 @@ log_file="sample.log"
 #parse the log file
 log_entries=parse_log_file(log_file)
 
-#analyze the log entries to find count requests per ip,most frequently accessed endpoint and to detect suspicious activity
+#analyze the log entries to find count requests per ip,most frequently accessed endpoint
 request_per_ip=count_requests(log_entries)
 most_accessed_endpoint=find_endpoint(log_entries)
 
@@ -75,4 +91,22 @@ for ip,count in request_per_ip:
 
 print("\n Most frequently accessed Endpoint : ")
 print(f"{most_accessed_endpoint[0]} (Accessed {most_accessed_endpoint[1]} times)")
+
+#Taking user input for threshold (if needed) and analyzing suspicious activity based on threshold
+reply=input("\n Do you want to enter threshold value to detect suspicious activity ? (y/n) (if no then default value of 10 will be used) : ")
+if reply.lower()=='y':
+    threshold=int(input("Enter threshold value to detect suspicious activity : "))
+    suspicious_activity=detect_suspicious_activity(log_entries,threshold)
+else:
+    suspicious_activity=detect_suspicious_activity(log_entries) 
+
+#Display the results
+if suspicious_activity:
+    print("\n Suspicious Activity Detected : ")
+    print(f"{'IP Address':<20} {'Failed Login Attempts':<15}")
+    for ip, count in suspicious_activity:
+        print(f"{ip:<20} {count}")
+else:
+    print("\n No suspicious activity detected.")
+        
 
