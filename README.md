@@ -10,7 +10,6 @@ This project is a log analysis system that processes log files and extracts usef
 - [Features](#features)
 - [Contributing](#contributing)
 - [License](#license)
-- [Acknowledgments](#acknowledgments)
 
 ## Overview
 
@@ -47,7 +46,3 @@ If you'd like to contribute to this project, please follow these steps:
 ## License
 
 This project is licensed under the MIT license.
-
-## Acknowledgments
-
-- Thanks to [VRV Security](https://vrvsecurity.in/) for this assignment.
